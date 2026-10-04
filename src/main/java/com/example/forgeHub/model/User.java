@@ -2,50 +2,48 @@ package com.example.forgeHub.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Data
-@Builder
-@AllArgsConstructor
+@Table(name = "Users")
 @NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "UserId")
+    private Integer userId;
 
-    @Column(length = 100, nullable = false)
+    @Column(name = "FullName", nullable = false, columnDefinition = "LONGTEXT")
     private String fullName;
 
-    @Column(nullable = false , unique = true, length = 100)
+    @Column(name = "Email", nullable = false, columnDefinition = "LONGTEXT")
     private String email;
 
-    @Column(nullable = false, length = 20)
-    private String password;
+    @Column(name = "PasswordHash", nullable = false, columnDefinition = "LONGTEXT")
+    private String passwordHash;
 
-    private int IsFirstTimeLogin;
+    @Column(name = "Role", nullable = false, columnDefinition = "LONGTEXT")
+    private String role;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
+    @Column(name = "IsFirstTimeLogin", nullable = false)
+    private Boolean isFirstTimeLogin=true;
 
-    @Column(length = 100)
-    private String companyName;
+    @Column(name = "SecretKey", columnDefinition = "LONGTEXT")
+    private String secretKey;
 
-    @Column(length = 300)
-    private String SecretKey;
+    // Hashed refresh token
+    @Column(name = "refresh_token_hash", columnDefinition = "LONGTEXT")
+    private String refreshTokenHash;
 
-    @Column(unique = true, length = 10)
-    private String mobileNo;
+    @Column(name = "refresh_jti", length = 36, unique = true)
+    private String refreshJti;
 
-    @Column(length = 300)
-    private String address;
-
-    @Column(unique = true, length = 30)
-    private String gstNo;
+    @Column(name = "revoked", nullable = false)
+    private Boolean revoked = false;
 
 
 }

@@ -1,10 +1,310 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
 <head>
+
     <meta charset="UTF-8">
-    <title>Title</title>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>ForgeHub - Vendor Dashboard</title>
+
+
+    <!-- Bootstrap 5.3.3 -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+
+    <!-- Bootstrap Icons -->
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+    <!-- Existing Navbar + Sidebar CSS -->
+    <link
+            rel="stylesheet"
+            th:href="@{/css/style.css}">
+
 </head>
-<body>
+
+
+<body class="bg-light">
+
+
+<!-- =====================================================
+     NAVBAR
+     ===================================================== -->
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+
+<!-- =====================================================
+     VENDOR SIDEBAR
+     ===================================================== -->
+
+<div th:replace="~{fragments/vendor-sidebar :: vendorSidebar}"></div>
+
+
+<!-- =====================================================
+     MAIN CONTENT
+     ===================================================== -->
+
+<main class="main-content">
+
+    <div class="container-fluid py-4">
+
+
+        <!-- =================================================
+             WELCOME
+             ================================================= -->
+
+        <div class="mb-4">
+
+            <h2 class="fw-bold mb-1">
+
+                Welcome,
+
+                <span
+                        class="text-primary"
+                        th:text="${userName}">
+
+                    Vendor
+
+                </span>
+
+            </h2>
+
+
+            <p class="text-muted mb-0">
+
+                Manage your RFTs and quotations.
+
+            </p>
+
+        </div>
+
+
+
+        <!-- =================================================
+             SUCCESS MESSAGE
+             ================================================= -->
+
+        <div
+                th:if="${param.submitted}"
+                class="alert alert-success alert-dismissible fade show"
+                role="alert">
+
+            <i class="bi bi-check-circle-fill me-2"></i>
+
+            <strong>Success!</strong>
+
+            Quotation submitted successfully.
+
+            <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
+        </div>
+
+
+
+        <!-- =================================================
+             DASHBOARD CARDS
+             ================================================= -->
+
+        <div class="row g-4">
+
+
+            <!-- =================================================
+                 ASSIGNED RFT
+                 ================================================= -->
+
+            <div class="col-lg-4 col-md-6">
+
+                <div class="card border-0 shadow-sm h-100">
+
+                    <div class="card-body p-4">
+
+
+                        <div class="mb-3">
+
+                            <i class="bi
+                                      bi-file-earmark-text
+                                      fs-1
+                                      text-primary">
+                            </i>
+
+                        </div>
+
+
+                        <h5 class="fw-bold">
+
+                            Assigned RFTs
+
+                        </h5>
+
+
+                        <p class="text-muted">
+
+                            View RFTs assigned to you.
+
+                        </p>
+
+
+                        <a
+                                th:href="@{/vendor/rfts}"
+                                class="btn btn-primary">
+
+                            View RFTs
+
+                            <i class="bi bi-arrow-right ms-1"></i>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 MY QUOTATIONS
+                 ================================================= -->
+
+            <div class="col-lg-4 col-md-6">
+
+                <div class="card border-0 shadow-sm h-100">
+
+                    <div class="card-body p-4">
+
+
+                        <div class="mb-3">
+
+                            <i class="bi
+                                      bi-receipt
+                                      fs-1
+                                      text-success">
+                            </i>
+
+                        </div>
+
+
+                        <h5 class="fw-bold">
+
+                            My Quotations
+
+                        </h5>
+
+
+                        <p class="text-muted">
+
+                            View your submitted quotations.
+
+                        </p>
+
+
+                        <a
+                                th:href="@{/vendor/quotation/list}"
+                                class="btn btn-success">
+
+                            View Quotations
+
+                            <i class="bi bi-arrow-right ms-1"></i>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 QUOTATION STATUS
+                 ================================================= -->
+
+            <div class="col-lg-4 col-md-6">
+
+                <div class="card border-0 shadow-sm h-100">
+
+                    <div class="card-body p-4">
+
+
+                        <div class="mb-3">
+
+                            <i class="bi
+                                      bi-check-circle
+                                      fs-1
+                                      text-warning">
+                            </i>
+
+                        </div>
+
+
+                        <h5 class="fw-bold">
+
+                            Quotation Status
+
+                        </h5>
+
+
+                        <p class="text-muted">
+
+                            Check your quotation status.
+
+                        </p>
+
+
+                        <a
+                                th:href="@{/vendor/quotation/list}"
+                                class="btn btn-warning">
+
+                            Check Status
+
+                            <i class="bi bi-arrow-right ms-1"></i>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+</main>
+
+
+<!-- =====================================================
+     FOOTER
+     ===================================================== -->
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+
+<!-- Bootstrap JS -->
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
 
 </body>
+
 </html>

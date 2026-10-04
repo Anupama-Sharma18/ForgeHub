@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>ForgeHub - Register User</title>
+
+
+    <!-- =====================================================
+         BOOTSTRAP 5
+    ====================================================== -->
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+
+    <!-- =====================================================
+         BOOTSTRAP ICONS
+    ====================================================== -->
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+            rel="stylesheet">
+
+
+    <!-- =====================================================
+         COMMON CSS
+    ====================================================== -->
+
+    <link
+            rel="stylesheet"
+            th:href="@{/css/style.css}">
+
+
+    <style>
+
+        /* =====================================================
+           PAGE
+        ====================================================== */
+
+        body {
+            background-color: #f4f6f9;
+        }
+
+
+        /* =====================================================
+           MAIN CONTENT
+        ====================================================== */
+
+        .main-content {
+            margin-left: 260px;
+            min-height: calc(100vh - 60px);
+        }
+
+
+        /* =====================================================
+           PAGE HEADER
+        ====================================================== */
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+
+        .page-title {
+            font-weight: 700;
+            color: #212529;
+        }
+
+
+        .page-subtitle {
+            color: #6c757d;
+            margin-bottom: 0;
+        }
+
+
+        /* =====================================================
+           FORM CARD
+        ====================================================== */
+
+        .form-card {
+            border: none;
+            border-radius: 12px;
+        }
+
+
+        .form-card-header {
+            background: #ffffff;
+            border-bottom: 1px solid #dee2e6;
+            padding: 20px 25px;
+        }
+
+
+        .form-card-body {
+            padding: 30px;
+        }
+
+
+        /* =====================================================
+           SECTION
+        ====================================================== */
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+
+        .section-title {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #212529;
+        }
+
+
+        .section-title i {
+            color: #0d6efd;
+            margin-right: 8px;
+        }
+
+
+        /* =====================================================
+           FORM LABEL
+        ====================================================== */
+
+        .form-label {
+            font-weight: 600;
+            color: #343a40;
+        }
+
+
+        .required {
+            color: #dc3545;
+        }
+
+
+        /* =====================================================
+           INPUT
+        ====================================================== */
+
+        .form-control,
+        .form-select {
+
+            min-height: 45px;
+
+            border-radius: 7px;
+
+            border: 1px solid #ced4da;
+
+        }
+
+
+        .form-control:focus,
+        .form-select:focus {
+
+            border-color: #86b7fe;
+
+            box-shadow:
+                    0 0 0 0.20rem
+                    rgba(13, 110, 253, 0.15);
+
+        }
+
+
+        textarea.form-control {
+            min-height: 100px;
+        }
+
+
+        /* =====================================================
+           PASSWORD
+        ====================================================== */
+
+        .password-wrapper {
+            position: relative;
+        }
+
+
+        .password-toggle {
+
+            position: absolute;
+
+            right: 12px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            border: none;
+
+            background: transparent;
+
+            color: #6c757d;
+
+            cursor: pointer;
+
+        }
+
+
+        /* =====================================================
+           INFO BOX
+        ====================================================== */
+
+        .info-box {
+
+            background: #f8f9fa;
+
+            border: 1px solid #e9ecef;
+
+            border-radius: 8px;
+
+            padding: 15px;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .info-box i {
+
+            color: #0d6efd;
+
+            margin-right: 8px;
+
+        }
+
+
+        /* =====================================================
+           FORM FOOTER
+        ====================================================== */
+
+        .form-footer {
+
+            border-top: 1px solid #dee2e6;
+
+            padding-top: 25px;
+
+            margin-top: 10px;
+
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ====================================================== */
+
+        @media (max-width: 768px) {
+
+            .main-content {
+
+                margin-left: 0;
+
+            }
+
+            .form-card-body {
+
+                padding: 20px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
+
+<div th:replace="~{fragments/navbar :: navbar}">
+</div>
+
+
+<!-- =====================================================
+     ADMIN SIDEBAR
+===================================================== -->
+
+<div th:replace="~{fragments/admin-sidebar :: adminSidebar}">
+</div>
+
+
+<!-- =====================================================
+     MAIN CONTENT
+===================================================== -->
+
+<main class="main-content">
+
+
+    <div class="container-fluid py-4 px-4">
+
+
+        <!-- =================================================
+             PAGE HEADER
+        ================================================== -->
+
+        <div class="page-header">
+
+
+            <div class="d-flex
+                        justify-content-between
+                        align-items-center
+                        flex-wrap
+                        gap-3">
+
+
+                <div>
+
+                    <h2 class="page-title mb-1">
+
+                        <i class="bi bi-person-plus-fill text-primary">
+                        </i>
+
+                        Register User
+
+                    </h2>
+
+
+                    <p class="page-subtitle">
+
+                        Create a new Admin or Vendor account.
+
+                    </p>
+
+                </div>
+
+
+                <!-- BACK TO DASHBOARD -->
+
+                <a
+                        th:href="@{/admin/dashboard}"
+                        class="btn btn-outline-secondary">
+
+                    <i class="bi bi-arrow-left"></i>
+
+                    Dashboard
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =================================================
+             SUCCESS MESSAGE
+        ================================================== -->
+
+        <div
+                th:if="${successMessage}"
+                class="alert alert-success
+                       alert-dismissible
+                       fade show
+                       shadow-sm">
+
+            <i class="bi bi-check-circle-fill me-2"></i>
+
+            <strong>Success!</strong>
+
+            <span th:text="${successMessage}">
+            </span>
+
+
+            <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
+        </div>
+
+
+        <!-- =================================================
+             ERROR MESSAGE
+        ================================================== -->
+
+        <div
+                th:if="${errorMessage}"
+                class="alert alert-danger
+                       alert-dismissible
+                       fade show
+                       shadow-sm">
+
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+            <strong>Error!</strong>
+
+            <span th:text="${errorMessage}">
+            </span>
+
+
+            <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
+        </div>
+
+
+        <!-- =================================================
+             FORM CARD
+        ================================================== -->
+
+        <div class="card form-card shadow-sm">
+
+
+            <!-- CARD HEADER -->
+
+            <div class="form-card-header">
+
+
+                <h5 class="mb-1 fw-bold">
+
+                    <i class="bi bi-person-vcard text-primary me-2">
+                    </i>
+
+                    User Information
+
+                </h5>
+
+
+                <small class="text-muted">
+
+                    Enter the user's account and contact details.
+
+                </small>
+
+
+            </div>
+
+
+            <!-- CARD BODY -->
+
+            <div class="form-card-body">
+
+
+                <!-- =================================================
+                     INFO BOX
+                ================================================== -->
+
+                <div class="info-box">
+
+                    <i class="bi bi-info-circle-fill"></i>
+
+                    <span>
+
+                        Select <strong>Admin</strong> or
+                        <strong>Vendor</strong> from the role field
+                        to create the appropriate account.
+
+                    </span>
+
+                </div>
+
+
+                <!-- =================================================
+                     REGISTRATION FORM
+                ================================================== -->
+
+                <form
+                        th:action="@{/user/register}"
+                        th:object="${userRequestDTO}"
+                        method="post">
+
+
+                    <!-- =================================================
+                         BASIC INFORMATION
+                    ================================================== -->
+
+                    <div class="form-section">
+
+
+                        <h6 class="section-title">
+
+                            <i class="bi bi-person"></i>
+
+                            Basic Information
+
+                        </h6>
+
+
+                        <div class="row g-4">
+
+
+                            <!-- FULL NAME -->
+
+                            <div class="col-md-6">
+
+                                <label
+                                        for="fullName"
+                                        class="form-label">
+
+                                    Full Name
+
+                                    <span class="required">
+                                        *
+                                    </span>
+
+                                </label>
+
+
+                                <input
+                                        type="text"
+                                        id="fullName"
+                                        class="form-control"
+                                        th:field="*{fullName}"
+                                        placeholder="Enter full name"
+                                        autocomplete="name"
+                                        required>
+
+
+                            </div>
+
+
+                            <!-- EMAIL -->
+
+                            <div class="col-md-6">
+
+                                <label
+                                        for="email"
+                                        class="form-label">
+
+                                    Email Address
+
+                                    <span class="required">
+                                        *
+                                    </span>
+
+                                </label>
+
+
+                                <input
+                                        type="email"
+                                        id="email"
+                                        class="form-control"
+                                        th:field="*{email}"
+                                        placeholder="example@gmail.com"
+                                        autocomplete="email"
+                                        required>
+
+
+                            </div>
+
+
+                            <!-- PASSWORD -->
+
+                            <div class="col-md-6">
+
+                                <label
+                                        for="password"
+                                        class="form-label">
+
+                                    Password
+
+                                    <span class="required">
+                                        *
+                                    </span>
+
+                                </label>
+
+
+                                <div class="password-wrapper">
+
+
+                                    <input
+                                            type="password"
+                                            id="password"
+                                            class="form-control pe-5"
+                                            th:field="*{password}"
+                                            placeholder="Enter password"
+                                            autocomplete="new-password"
+                                            required>
+
+
+                                    <button
+                                            type="button"
+                                            class="password-toggle"
+                                            onclick="togglePassword()">
+
+                                        <i
+                                                id="passwordIcon"
+                                                class="bi bi-eye">
+                                        </i>
+
+                                    </button>
+
+
+                                </div>
+
+
+                            </div>
+
+
+                            <!-- ROLE -->
+
+                            <div class="col-md-6">
+
+                                <label
+                                        for="role"
+                                        class="form-label">
+
+                                    User Role
+
+                                    <span class="required">
+                                        *
+                                    </span>
+
+                                </label>
+
+
+                                <select
+                                        id="role"
+                                        class="form-select"
+                                        th:field="*{role}"
+                                        required>
+
+
+                                    <option value="">
+                                        Select User Role
+                                    </option>
+
+
+                                    <option value="ADMIN">
+
+                                        Admin
+
+                                    </option>
+
+
+                                    <option value="VENDOR">
+
+                                        Vendor
+
+                                    </option>
+
+
+                                </select>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- =================================================
+                         COMPANY INFORMATION
+                    ================================================== -->
+
+                    <div class="form-section">
+
+
+                        <h6 class="section-title">
+
+                            <i class="bi bi-building"></i>
+
+                            Company Information
+
+                        </h6>
+
+
+                        <div class="row g-4">
+
+
+                            <!-- COMPANY NAME -->
+
+                            <div class="col-md-6">
+
+                                <label
+                                        for="companyName"
+                                        class="form-label">
+
+                                    Company Name
+
+                                </label>
+
+
+                                <input
+                                        type="text"
+                                        id="companyName"
+                                        class="form-control"
+                                        th:field="*{companyName}"
+                                        placeholder="Enter company name">
+
+
+                            </div>
+
+
+                            <!-- GST NUMBER -->
+
+                            <div class="col-md-6">
+
+                                <label
+                                        for="gstNo"
+                                        class="form-label">
+
+                                    GST Number
+
+                                </label>
+
+
+                                <input
+                                        type="text"
+                                        id="gstNo"
+                                        class="form-control"
+                                        th:field="*{gstNo}"
+                                        placeholder="Enter GST number"
+                                        maxlength="15"
+                                        style="text-transform: uppercase;">
+
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- =================================================
+                         CONTACT INFORMATION
+                    ================================================== -->
+
+                    <div class="form-section">
+
+
+                        <h6 class="section-title">
+
+                            <i class="bi bi-telephone"></i>
+
+                            Contact Information
+
+                        </h6>
+
+
+                        <div class="row g-4">
+
+
+                            <!-- MOBILE -->
+
+                            <div class="col-md-6">
+
+                                <label
+                                        for="mobileNo"
+                                        class="form-label">
+
+                                    Mobile Number
+
+                                </label>
+
+
+                                <input
+                                        type="tel"
+                                        id="mobileNo"
+                                        class="form-control"
+                                        th:field="*{mobileNo}"
+                                        placeholder="Enter mobile number"
+                                        maxlength="10">
+
+
+                            </div>
+
+
+                            <!-- ADDRESS -->
+
+                            <div class="col-md-12">
+
+                                <label
+                                        for="address"
+                                        class="form-label">
+
+                                    Address
+
+                                </label>
+
+
+                                <textarea
+                                        id="address"
+                                        class="form-control"
+                                        th:field="*{address}"
+                                        rows="4"
+                                        placeholder="Enter complete address">
+                                </textarea>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- =================================================
+                         FORM FOOTER
+                    ================================================== -->
+
+                    <div
+                            class="form-footer
+                                   d-flex
+                                   justify-content-end
+                                   gap-2
+                                   flex-wrap">
+
+
+                        <!-- RESET -->
+
+                        <button
+                                type="reset"
+                                class="btn btn-outline-secondary">
+
+                            <i class="bi bi-arrow-counterclockwise"></i>
+
+                            Reset
+
+                        </button>
+
+
+                        <!-- REGISTER -->
+
+                        <button
+                                type="submit"
+                                class="btn btn-primary px-4">
+
+                            <i class="bi bi-person-plus-fill"></i>
+
+                            Register User
+
+                        </button>
+
+
+                    </div>
+
+
+                </form>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</main>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<div th:replace="~{fragments/footer :: footer}">
+</div>
+
+
+<!-- =====================================================
+     BOOTSTRAP JS
+===================================================== -->
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+<!-- =====================================================
+     PASSWORD TOGGLE
+===================================================== -->
+
+<script>
+
+    function togglePassword() {
+
+        const password =
+            document.getElementById("password");
+
+        const icon =
+            document.getElementById("passwordIcon");
+
+
+        if (password.type === "password") {
+
+            password.type = "text";
+
+            icon.classList.remove("bi-eye");
+
+            icon.classList.add("bi-eye-slash");
+
+        } else {
+
+            password.type = "password";
+
+            icon.classList.remove("bi-eye-slash");
+
+            icon.classList.add("bi-eye");
+
+        }
+
+    }
+
+</script>
+
+
+</body>
+
+</html>

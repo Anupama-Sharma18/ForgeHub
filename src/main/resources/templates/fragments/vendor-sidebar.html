@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<aside th:fragment="vendorSidebar"
+       class="sidebar">
+
+    <!-- MENU HEADER -->
+
+    <div class="sidebar-header">
+
+        <i class="bi bi-grid-1x2-fill"></i>
+
+        <span>
+            Vendor Menu
+        </span>
+
+    </div>
+
+
+    <!-- DASHBOARD -->
+
+    <a th:href="@{/vendor/dashboard}"
+       class="sidebar-link">
+
+        <i class="bi bi-speedometer2"></i>
+
+        <span>
+            Dashboard
+        </span>
+
+    </a>
+
+
+    <!-- ASSIGNED RFT -->
+
+    <a th:href="@{/vendor/rfts}"
+       class="sidebar-link">
+
+        <i class="bi bi-file-earmark-text"></i>
+
+        <span>
+            Assigned RFTs
+        </span>
+
+    </a>
+
+
+    <!-- MY QUOTATIONS -->
+
+    <a th:href="@{/vendor/quotation/list}"
+       class="sidebar-link">
+
+        <i class="bi bi-receipt"></i>
+
+        <span>
+            My Quotations
+        </span>
+
+    </a>
+
+
+    <!-- APPROVED -->
+
+    <a th:href="@{/vendor/quotation/list}"
+       class="sidebar-link">
+
+        <i class="bi bi-check-circle"></i>
+
+        <span>
+            Approved Quotations
+        </span>
+
+    </a>
+
+
+    <!-- REJECTED -->
+
+    <a th:href="@{/vendor/quotation/list}"
+       class="sidebar-link">
+
+        <i class="bi bi-x-circle"></i>
+
+        <span>
+            Rejected Quotations
+        </span>
+
+    </a>
+
+
+    <!-- PROFILE -->
+
+    <a href="#"
+       class="sidebar-link">
+
+        <i class="bi bi-person-circle"></i>
+
+        <span>
+            My Profile
+        </span>
+
+    </a>
+
+</aside>
+
+</body>
+</html>

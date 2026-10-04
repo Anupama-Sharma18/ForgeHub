@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>ForgeHub - My Quotations</title>
+
+
+    <!-- Bootstrap -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+
+    <!-- Bootstrap Icons -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+            rel="stylesheet">
+
+
+    <!-- Common CSS -->
+    <link
+            rel="stylesheet"
+            th:href="@{/css/style.css}">
+
+</head>
+
+
+<body class="bg-light">
+
+
+<!-- Navbar -->
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+
+<!-- Vendor Sidebar -->
+
+<div th:replace="~{fragments/vendor-sidebar :: vendorSidebar}"></div>
+
+
+<!-- Main Content -->
+
+<main class="main-content">
+
+    <div class="container-fluid py-4">
+
+
+        <!-- Page Header -->
+
+        <div class="d-flex
+                    justify-content-between
+                    align-items-center
+                    mb-4">
+
+            <div>
+
+                <h2 class="fw-bold mb-1">
+
+                    <i class="bi bi-file-earmark-text me-2"></i>
+
+                    My Quotations
+
+                </h2>
+
+                <p class="text-muted mb-0">
+
+                    View your submitted quotations.
+
+                </p>
+
+            </div>
+
+
+            <a
+                    th:href="@{/vendor/dashboard}"
+                    class="btn btn-outline-primary">
+
+                <i class="bi bi-speedometer2 me-1"></i>
+
+                Dashboard
+
+            </a>
+
+        </div>
+
+
+
+        <!-- Success Message -->
+
+        <div
+                th:if="${param.submitted}"
+                class="alert alert-success alert-dismissible fade show"
+                role="alert">
+
+            <i class="bi bi-check-circle-fill me-2"></i>
+
+            <strong>Quotation Submitted Successfully!</strong>
+
+            Your quotation is waiting for Admin approval.
+
+            <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
+        </div>
+
+
+
+        <!-- No Quotations -->
+
+        <div
+                th:if="${#lists.isEmpty(quotations)}"
+                class="card border-0 shadow-sm">
+
+            <div class="card-body text-center py-5">
+
+                <i class="bi bi-inbox display-4 text-muted"></i>
+
+                <h5 class="mt-3">
+
+                    No Quotations Found
+
+                </h5>
+
+                <p class="text-muted mb-0">
+
+                    You have not submitted any quotation yet.
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Quotation Table -->
+
+        <div
+                th:if="${!#lists.isEmpty(quotations)}"
+                class="card border-0 shadow-sm">
+
+
+            <!-- Header -->
+
+            <div class="card-header bg-white py-3">
+
+                <h5 class="mb-0">
+
+                    <i class="bi bi-list-check me-2"></i>
+
+                    Quotation List
+
+                </h5>
+
+            </div>
+
+
+
+            <!-- Table -->
+
+            <div class="card-body p-0">
+
+                <div class="table-responsive">
+
+                    <table
+                            class="table
+                                   table-hover
+                                   align-middle
+                                   mb-0">
+
+
+                        <thead class="table-dark">
+
+                        <tr>
+
+                            <th>#</th>
+
+                            <th>Bid No</th>
+
+                            <th>RFT ID</th>
+
+                            <th>Vendor</th>
+
+                            <th>Company</th>
+
+                            <th>Delivery Date</th>
+
+                            <th>Submitted Date</th>
+
+                            <th>Status</th>
+
+                            <th>Action</th>
+
+                        </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                        <tr
+                                th:each="quotation, stat :
+                                ${quotations}">
+
+
+                            <!-- Number -->
+
+                            <td
+                                    th:text="${stat.count}">
+
+                                1
+
+                            </td>
+
+
+                            <!-- Bid No -->
+
+                            <td>
+
+                                <strong
+                                        th:text="${quotation.bidNo}">
+
+                                    BID/26/000001
+
+                                </strong>
+
+                            </td>
+
+
+                            <!-- RFT -->
+
+                            <td>
+
+                                <span
+                                        class="badge
+                                               bg-light
+                                               text-dark
+                                               border"
+                                        th:text="${quotation.rftId}">
+
+                                    1
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- Vendor -->
+
+                            <td
+                                    th:text="${quotation.vendorName}">
+
+                                Vendor Name
+
+                            </td>
+
+
+                            <!-- Company -->
+
+                            <td
+                                    th:text="${quotation.companyName}">
+
+                                Company Name
+
+                            </td>
+
+
+                            <!-- Delivery Date -->
+
+                            <td>
+
+                                <i class="bi bi-calendar-event me-1"></i>
+
+                                <span
+                                        th:text="${quotation.deliveryDate}">
+
+                                    2026-10-10
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- Submitted Date -->
+
+                            <td>
+
+                                <i class="bi bi-clock me-1"></i>
+
+                                <span
+                                        th:text="${quotation.submittedDate}">
+
+                                    2026-10-04
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- Status -->
+
+                            <td>
+
+
+                                <span
+                                        th:if="${quotation.status == 'SUBMITTED'}"
+                                        class="badge bg-warning text-dark">
+
+                                    <i class="bi
+                                              bi-hourglass-split
+                                              me-1">
+                                    </i>
+
+                                    SUBMITTED
+
+                                </span>
+
+
+                                <span
+                                        th:if="${quotation.status == 'APPROVED'}"
+                                        class="badge bg-success">
+
+                                    <i class="bi
+                                              bi-check-circle
+                                              me-1">
+                                    </i>
+
+                                    APPROVED
+
+                                </span>
+
+
+                                <span
+                                        th:if="${quotation.status == 'REJECTED'}"
+                                        class="badge bg-danger">
+
+                                    <i class="bi
+                                              bi-x-circle
+                                              me-1">
+                                    </i>
+
+                                    REJECTED
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- Action -->
+
+                            <td>
+
+                                <div class="d-flex gap-1">
+
+
+                                    <!-- View -->
+
+                                    <a
+                                            th:href="@{/vendor/quotation/view/{id}(id=${quotation.quotationId})}"
+                                            class="btn btn-sm btn-primary">
+
+                                        <i class="bi bi-eye me-1"></i>
+
+                                        View
+
+                                    </a>
+
+
+                                    <!-- Edit -->
+
+                                    <a
+                                            th:if="${quotation.status != 'APPROVED'}"
+                                            th:href="@{/vendor/quotation/edit/{id}(id=${quotation.quotationId})}"
+                                            class="btn btn-sm btn-warning">
+
+                                        <i class="bi bi-pencil me-1"></i>
+
+                                        Edit
+
+                                    </a>
+
+
+                                    <!-- Approved -->
+
+                                    <span
+                                            th:if="${quotation.status == 'APPROVED'}"
+                                            class="badge bg-success
+                                                   d-flex
+                                                   align-items-center">
+
+                                        <i class="bi bi-lock-fill me-1"></i>
+
+                                        Locked
+
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</main>
+
+
+<!-- Footer -->
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+
+<!-- Bootstrap JS -->
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>

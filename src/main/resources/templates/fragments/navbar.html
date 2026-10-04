@@ -1,10 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org">
+
 <body>
+
+<nav th:fragment="navbar" class="navbar navbar-dark bg-dark fixed-top">
+
+    <div class="container-fluid">
+
+        <!-- LEFT -->
+        <div class="d-flex align-items-center">
+
+            <span class="navbar-brand fw-bold mb-0">
+                <i class="bi bi-building"></i>
+                ForgeHub
+            </span>
+
+        </div>
+
+
+        <!-- RIGHT -->
+        <div class="d-flex align-items-center gap-3">
+
+            <span class="text-white d-none d-md-inline">
+                Welcome,
+                <strong th:text="${userName}">
+                    User
+                </strong>
+            </span>
+
+            <a th:href="@{/auth/logout}"
+               class="btn btn-danger btn-sm">
+
+                <i class="bi bi-box-arrow-right"></i>
+                Logout
+
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
 
 </body>
 </html>

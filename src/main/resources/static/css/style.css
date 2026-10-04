@@ -1,0 +1,258 @@
+/* =====================================================
+   GLOBAL
+===================================================== */
+
+body {
+    margin: 0;
+    padding: 0;
+    background: #f5f6fa;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* =====================================================
+   NAVBAR
+===================================================== */
+
+.navbar {
+    height: 60px;
+    z-index: 1050;
+}
+
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.sidebar {
+
+    position: fixed;
+
+    top: 60px;
+    left: 0;
+    bottom: 0;
+
+    width: 70px;
+
+    background: #212529;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    transition: width 0.3s ease;
+
+    z-index: 1040;
+
+    padding-top: 15px;
+}
+
+
+/* =====================================================
+   SIDEBAR HOVER
+===================================================== */
+
+.sidebar:hover {
+
+    width: 240px;
+
+}
+
+
+/* =====================================================
+   SIDEBAR HEADER
+===================================================== */
+
+.sidebar-header {
+
+    height: 55px;
+
+    display: flex;
+    align-items: center;
+
+    padding-left: 23px;
+
+    color: white;
+
+    font-size: 17px;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    margin-bottom: 10px;
+}
+
+
+/* =====================================================
+   SIDEBAR HEADER ICON
+===================================================== */
+
+.sidebar-header i {
+
+    min-width: 25px;
+
+    font-size: 20px;
+
+}
+
+
+/* =====================================================
+   SIDEBAR LINKS
+===================================================== */
+
+.sidebar-link {
+
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+
+    color: #adb5bd;
+
+    text-decoration: none;
+
+    padding-left: 22px;
+
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+
+}
+
+
+/* =====================================================
+   LINK ICON
+===================================================== */
+
+.sidebar-link i {
+
+    min-width: 28px;
+
+    font-size: 20px;
+
+}
+
+
+/* =====================================================
+   LINK TEXT
+===================================================== */
+
+.sidebar-link span {
+
+    margin-left: 12px;
+
+    opacity: 0;
+
+    transition: opacity 0.2s ease;
+
+}
+
+
+/* =====================================================
+   SHOW TEXT WHEN HOVER
+===================================================== */
+
+.sidebar:hover .sidebar-link span {
+
+    opacity: 1;
+
+}
+
+
+/* =====================================================
+   HOVER LINK
+===================================================== */
+
+.sidebar-link:hover {
+
+    background: #343a40;
+
+    color: white;
+
+}
+
+
+/* =====================================================
+   MAIN CONTENT
+===================================================== */
+
+.main-content {
+
+    margin-left: 70px;
+
+    padding-top: 60px;
+
+    min-height: calc(100vh - 60px);
+
+    transition: margin-left 0.3s ease;
+
+}
+
+
+/* =====================================================
+   CONTENT WHEN SIDEBAR HOVER
+===================================================== */
+
+.sidebar:hover ~ .main-content {
+
+    margin-left: 240px;
+
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footer {
+
+    margin-left: 70px;
+
+    background: #212529;
+
+    color: #adb5bd;
+
+    padding: 15px;
+
+    transition: margin-left 0.3s ease;
+
+}
+
+
+.sidebar:hover ~ .main-content + .footer {
+
+    margin-left: 240px;
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 768px) {
+
+    .sidebar {
+
+        width: 60px;
+
+    }
+
+    .sidebar:hover {
+
+        width: 220px;
+
+    }
+
+    .main-content {
+
+        margin-left: 60px;
+
+    }
+
+    .sidebar:hover ~ .main-content {
+
+        margin-left: 220px;
+
+    }
+
+}

@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>ForgeHub - Assigned RFTs</title>
+
+
+    <!-- =====================================================
+         BOOTSTRAP 5.3.3
+         ===================================================== -->
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+
+    <!-- =====================================================
+         BOOTSTRAP ICONS
+         ===================================================== -->
+
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+    <!-- =====================================================
+         COMMON PROJECT CSS
+         Navbar + Sidebar Layout
+         ===================================================== -->
+
+    <link
+            rel="stylesheet"
+            th:href="@{/css/style.css}">
+
+</head>
+
+
+<body class="bg-light">
+
+
+<!-- =====================================================
+     NAVBAR
+     ===================================================== -->
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+
+
+<!-- =====================================================
+     VENDOR SIDEBAR
+     ===================================================== -->
+
+<div th:replace="~{fragments/vendor-sidebar :: vendorSidebar}"></div>
+
+
+
+<!-- =====================================================
+     MAIN CONTENT
+     ===================================================== -->
+
+<main class="main-content">
+
+    <div class="container-fluid py-4">
+
+
+        <!-- =================================================
+             PAGE HEADER
+             ================================================= -->
+
+        <div class="card border-0 shadow-sm mb-4">
+
+            <div class="card-body">
+
+                <div class="d-flex
+                            justify-content-between
+                            align-items-center
+                            flex-wrap
+                            gap-3">
+
+
+                    <!-- TITLE -->
+
+                    <div class="d-flex align-items-center">
+
+                        <div class="bg-primary
+                                    bg-opacity-10
+                                    text-primary
+                                    rounded-circle
+                                    p-3
+                                    me-3">
+
+                            <i class="bi bi-file-earmark-text fs-3"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <h2 class="fw-bold mb-1">
+
+                                Assigned RFTs
+
+                            </h2>
+
+
+                            <p class="text-muted mb-0">
+
+                                View RFTs assigned to your company
+                                and submit quotations.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- REFRESH -->
+
+                    <a
+                            th:href="@{/vendor/rfts}"
+                            class="btn btn-outline-primary">
+
+                        <i class="bi bi-arrow-clockwise me-1"></i>
+
+                        Refresh
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             SUMMARY CARDS
+             ================================================= -->
+
+        <div class="row g-3 mb-4">
+
+
+            <!-- TOTAL -->
+
+            <div class="col-xl-4 col-md-6">
+
+                <div class="card border-0 shadow-sm h-100">
+
+                    <div class="card-body">
+
+                        <div class="d-flex
+                                    justify-content-between
+                                    align-items-center">
+
+
+                            <div>
+
+                                <p class="text-muted mb-1">
+
+                                    Total Assigned RFTs
+
+                                </p>
+
+
+                                <h3 class="fw-bold mb-0">
+
+                                    <span
+                                            th:text="${#lists.size(assignments)}">
+
+                                        0
+
+                                    </span>
+
+                                </h3>
+
+                            </div>
+
+
+                            <div class="bg-primary
+                                        bg-opacity-10
+                                        text-primary
+                                        rounded-circle
+                                        p-3">
+
+                                <i class="bi
+                                          bi-file-earmark-text
+                                          fs-4">
+                                </i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- OPEN -->
+
+            <div class="col-xl-4 col-md-6">
+
+                <div class="card border-0 shadow-sm h-100">
+
+                    <div class="card-body">
+
+                        <div class="d-flex
+                                    justify-content-between
+                                    align-items-center">
+
+
+                            <div>
+
+                                <p class="text-muted mb-1">
+
+                                    Open RFTs
+
+                                </p>
+
+
+                                <h3 class="fw-bold mb-0">
+
+                                    <span
+                                            th:text="${#lists.size(assignments.?[rft.status == 'OPEN'])}">
+
+                                        0
+
+                                    </span>
+
+                                </h3>
+
+                            </div>
+
+
+                            <div class="bg-success
+                                        bg-opacity-10
+                                        text-success
+                                        rounded-circle
+                                        p-3">
+
+                                <i class="bi bi-unlock fs-4"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- CLOSED -->
+
+            <div class="col-xl-4 col-md-6">
+
+                <div class="card border-0 shadow-sm h-100">
+
+                    <div class="card-body">
+
+                        <div class="d-flex
+                                    justify-content-between
+                                    align-items-center">
+
+
+                            <div>
+
+                                <p class="text-muted mb-1">
+
+                                    Closed RFTs
+
+                                </p>
+
+
+                                <h3 class="fw-bold mb-0">
+
+                                    <span
+                                            th:text="${#lists.size(assignments.?[rft.status == 'CLOSE'])}">
+
+                                        0
+
+                                    </span>
+
+                                </h3>
+
+                            </div>
+
+
+                            <div class="bg-secondary
+                                        bg-opacity-10
+                                        text-secondary
+                                        rounded-circle
+                                        p-3">
+
+                                <i class="bi bi-lock fs-4"></i>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             NO RFT
+             ================================================= -->
+
+        <div
+                th:if="${#lists.isEmpty(assignments)}"
+                class="card border-0 shadow-sm">
+
+            <div class="card-body text-center py-5">
+
+
+                <i class="bi
+                          bi-inbox
+                          display-3
+                          text-muted">
+                </i>
+
+
+                <h4 class="fw-bold mt-3">
+
+                    No RFTs Assigned
+
+                </h4>
+
+
+                <p class="text-muted mb-0">
+
+                    There are currently no RFTs assigned
+                    to your account.
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             RFT TABLE
+             ================================================= -->
+
+        <div
+                th:if="${!#lists.isEmpty(assignments)}"
+                class="card border-0 shadow-sm">
+
+
+            <!-- CARD HEADER -->
+
+            <div class="card-header
+                        bg-white
+                        py-3">
+
+
+                <div class="d-flex
+                            justify-content-between
+                            align-items-center">
+
+
+                    <div>
+
+                        <h5 class="fw-bold mb-1">
+
+                            Assigned RFT List
+
+                        </h5>
+
+
+                        <small class="text-muted">
+
+                            RFTs available for quotation.
+
+                        </small>
+
+                    </div>
+
+
+                    <span class="badge bg-primary">
+
+                        <span
+                                th:text="${#lists.size(assignments)}">
+
+                            0
+
+                        </span>
+
+                        RFTs
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- TABLE -->
+
+            <div class="card-body p-0">
+
+                <div class="table-responsive">
+
+                    <table
+                            class="table
+                                   table-hover
+                                   align-middle
+                                   mb-0">
+
+
+                        <!-- TABLE HEADER -->
+
+                        <thead class="table-dark">
+
+                        <tr>
+
+                            <th class="px-3">
+
+                                #
+
+                            </th>
+
+                            <th>
+
+                                RFT No
+
+                            </th>
+
+                            <th>
+
+                                Indent No
+
+                            </th>
+
+                            <th>
+
+                                Description
+
+                            </th>
+
+                            <th>
+
+                                Delivery Location
+
+                            </th>
+
+                            <th>
+
+                                Bid Date
+
+                            </th>
+
+                            <th>
+
+                                Expiry Date
+
+                            </th>
+
+                            <th>
+
+                                Status
+
+                            </th>
+
+                            <th class="text-center">
+
+                                Action
+
+                            </th>
+
+                        </tr>
+
+                        </thead>
+
+
+
+                        <!-- TABLE BODY -->
+
+                        <tbody>
+
+
+                        <tr
+                                th:each="assignment, stat :
+                                ${assignments}">
+
+
+                            <!-- NUMBER -->
+
+                            <td class="px-3">
+
+                                <span
+                                        class="badge bg-secondary"
+                                        th:text="${stat.count}">
+
+                                    1
+
+                                </span>
+
+                            </td>
+
+
+
+                            <!-- RFT NO -->
+
+                            <td>
+
+                                <strong
+                                        class="text-primary"
+                                        th:text="${assignment.rft.rftNo}">
+
+                                    RFT/26/000001
+
+                                </strong>
+
+                            </td>
+
+
+
+                            <!-- INDENT -->
+
+                            <td>
+
+                                <span
+                                        class="badge
+                                               bg-light
+                                               text-dark
+                                               border"
+                                        th:text="${assignment.rft.indentNo}">
+
+                                    IND/26/0001
+
+                                </span>
+
+                            </td>
+
+
+
+                            <!-- DESCRIPTION -->
+
+                            <td>
+
+                                <span
+                                        th:text="${assignment.rft.description}">
+
+                                    RFT Description
+
+                                </span>
+
+                            </td>
+
+
+
+                            <!-- LOCATION -->
+
+                            <td>
+
+                                <i class="bi
+                                          bi-geo-alt
+                                          text-danger
+                                          me-1">
+                                </i>
+
+
+                                <span
+                                        th:text="${assignment.rft.deliveryLocation}">
+
+                                    Pune
+
+                                </span>
+
+                            </td>
+
+
+
+                            <!-- BID DATE -->
+
+                            <td>
+
+                                <i class="bi
+                                          bi-calendar-event
+                                          text-primary
+                                          me-1">
+                                </i>
+
+
+                                <span
+                                        th:text="${#temporals.format(assignment.rft.bidDate, 'dd-MM-yyyy HH:mm')}">
+
+                                    01-10-2026 10:00
+
+                                </span>
+
+                            </td>
+
+
+
+                            <!-- EXPIRY DATE -->
+
+                            <td>
+
+                                <i class="bi
+                                          bi-calendar-x
+                                          text-danger
+                                          me-1">
+                                </i>
+
+
+                                <span
+                                        th:text="${#temporals.format(assignment.rft.expiryDate, 'dd-MM-yyyy HH:mm')}">
+
+                                    10-10-2026 18:00
+
+                                </span>
+
+                            </td>
+
+
+
+                            <!-- STATUS -->
+
+                            <td>
+
+
+                                <!-- OPEN -->
+
+                                <span
+                                        th:if="${assignment.rft.status == 'OPEN'}"
+                                        class="badge bg-success">
+
+                                    <i class="bi
+                                              bi-unlock
+                                              me-1">
+                                    </i>
+
+                                    OPEN
+
+                                </span>
+
+
+
+                                <!-- CLOSED -->
+
+                                <span
+                                        th:if="${assignment.rft.status == 'CLOSE'}"
+                                        class="badge bg-secondary">
+
+                                    <i class="bi
+                                              bi-lock
+                                              me-1">
+                                    </i>
+
+                                    CLOSED
+
+                                </span>
+
+
+
+                                <!-- DRAFT -->
+
+                                <span
+                                        th:if="${assignment.rft.status == 'DRAFT'}"
+                                        class="badge
+                                               bg-warning
+                                               text-dark">
+
+                                    DRAFT
+
+                                </span>
+
+                            </td>
+
+
+
+                            <!-- ACTION -->
+
+                            <td class="text-center">
+
+                                <a
+                                        th:href="@{/vendor/rft/{id}(id=${assignment.rft.rftId})}"
+                                        class="btn
+                                               btn-sm
+                                               btn-primary">
+
+                                    <i class="bi bi-eye me-1"></i>
+
+                                    Open RFT
+
+                                </a>
+
+                            </td>
+
+
+                        </tr>
+
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- TABLE FOOTER -->
+
+            <div class="card-footer bg-white">
+
+                <div class="d-flex
+                            justify-content-between
+                            align-items-center
+                            flex-wrap
+                            gap-2">
+
+
+                    <small class="text-muted">
+
+                        <i class="bi
+                                  bi-info-circle
+                                  me-1">
+                        </i>
+
+                        Open an RFT to view item details
+                        and create your quotation.
+
+                    </small>
+
+
+                    <span class="badge bg-success">
+
+                        <i class="bi
+                                  bi-shield-check
+                                  me-1">
+                        </i>
+
+                        Vendor Access
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+</main>
+
+
+
+<!-- =====================================================
+     FOOTER
+     ===================================================== -->
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+
+
+<!-- =====================================================
+     BOOTSTRAP JS
+     ===================================================== -->
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>

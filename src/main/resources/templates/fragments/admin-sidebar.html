@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<aside th:fragment="adminSidebar"
+       class="sidebar">
+
+    <!-- LOGO / MENU TITLE -->
+
+    <div class="sidebar-header">
+
+        <i class="bi bi-grid-1x2-fill"></i>
+
+        <span>
+            Admin Menu
+        </span>
+
+    </div>
+
+
+    <!-- DASHBOARD -->
+
+    <a th:href="@{/admin/dashboard}"
+       class="sidebar-link">
+
+        <i class="bi bi-speedometer2"></i>
+
+        <span>
+            Dashboard
+        </span>
+
+    </a>
+
+
+    <!-- CREATE RFT -->
+
+    <a th:href="@{/rft/create}"
+       class="sidebar-link">
+
+        <i class="bi bi-file-earmark-plus"></i>
+
+        <span>
+            Create RFT
+        </span>
+
+    </a>
+
+
+    <!-- RFT LIST -->
+
+    <a th:href="@{/rft/list}"
+       class="sidebar-link">
+
+        <i class="bi bi-list-ul"></i>
+
+        <span>
+            RFT List
+        </span>
+
+    </a>
+
+
+    <!-- REGISTER USER -->
+
+    <a th:href="@{/user/register}"
+       class="sidebar-link">
+
+        <i class="bi bi-person-plus"></i>
+
+        <span>
+            Register User
+        </span>
+
+    </a>
+
+
+    <!-- QUOTATIONS -->
+
+    <a th:href="@{/admin/quotations}"
+       class="sidebar-link">
+
+        <i class="bi bi-receipt"></i>
+
+        <span>
+            Vendor Quotations
+        </span>
+
+    </a>
+
+
+    <!-- USERS -->
+
+    <a href="#"
+       class="sidebar-link">
+
+        <i class="bi bi-people"></i>
+
+        <span>
+            Users
+        </span>
+
+    </a>
+
+
+    <!-- REPORTS -->
+
+    <a href="#"
+       class="sidebar-link">
+
+        <i class="bi bi-bar-chart"></i>
+
+        <span>
+            Reports
+        </span>
+
+    </a>
+
+</aside>
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+@PostMapping("/user")
+    public ResponseEntity<ApiResponse<UserResponseDTO>> registerUser(
+            @RequestBody UserRequestDTO userRequestDTO) {
+
+        UserResponseDTO user = userService.registerUser(userRequestDTO);
+
+        ApiResponse<UserResponseDTO> apiResponse = ApiResponse.<UserResponseDTO>builder()
+                .success(true)
+                .message("User Registered Successfully")
+                .data(user)
+                .build();
+
+        return ResponseEntity.ok(apiResponse);
+    }
+
+
+     @PostMapping("/rft")
+        public ResponseEntity<ApiResponse<RFTResponseDTO>> createRFT(@RequestBody RFTRequestDTO rftRequestDTO)
+        {
+            RFTResponseDTO responseDTO=rftService.createRFT(rftRequestDTO);
+
+            ApiResponse<RFTResponseDTO> apiResponse=ApiResponse.<RFTResponseDTO>builder()
+                    .success(true)
+                    .message("Request For Quotation is Register Successfully ")
+                    .data(responseDTO)
+                    .build();
+
+            return ResponseEntity.ok(apiResponse);
+        }
+
+
+        //package com.example.forgeHub.controller;
+        //
+        //import com.example.forgeHub.dto.request.RFTRequestDTO;
+        //import com.example.forgeHub.dto.response.RFTResponseDTO;
+        //import com.example.forgeHub.serviceImpl.RFTServiceImpl;
+        //import com.example.forgeHub.serviceImpl.UserServiceImpl;
+        //import com.example.forgeHub.util.ApiResponse;
+        //import lombok.AllArgsConstructor;
+        //import org.springframework.http.ResponseEntity;
+        //import org.springframework.web.bind.annotation.PostMapping;
+        //import org.springframework.web.bind.annotation.RequestBody;
+        //import org.springframework.web.bind.annotation.RequestMapping;
+        //import org.springframework.web.bind.annotation.RestController;
+        //
+        //@RestController
+        //@RequestMapping("/api/v1")
+        //@AllArgsConstructor
+        //public class DemoController {
+        //
+        //    private RFTServiceImpl rftService;
+        //
+        //    @PostMapping("/rft")
+        //    public ResponseEntity<ApiResponse<RFTResponseDTO>> createRFT(@RequestBody RFTRequestDTO rftRequestDTO)
+        //    {
+        //        RFTResponseDTO responseDTO=rftService.createRFT(rftRequestDTO);
+        //
+        //        ApiResponse<RFTResponseDTO> apiResponse=ApiResponse.<RFTResponseDTO>builder()
+        //                .success(true)
+        //                .message("Request For Quotation is Register Successfully ")
+        //                .data(responseDTO)
+        //                .build();
+        //
+        //        return ResponseEntity.ok(apiResponse);
+        //    }
+        //}

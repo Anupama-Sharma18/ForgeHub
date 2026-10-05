@@ -3,10 +3,10 @@ package com.example.forgeHub.controller;
 import com.example.forgeHub.dto.response.QuotationResponseDTO;
 import com.example.forgeHub.serviceImpl.QuotationServiceImpl;
 
-import jakarta.servlet.http.HttpSession;
-
 import lombok.AllArgsConstructor;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
@@ -19,7 +19,6 @@ import java.util.List;
 @AllArgsConstructor
 public class AdminController {
 
-
     private final QuotationServiceImpl quotationService;
 
 
@@ -29,45 +28,54 @@ public class AdminController {
 
     @GetMapping("/dashboard")
     public String dashboard(
-            HttpSession session,
-            Model model) {
+            Authentication authentication,
+            Model model
+    ) {
 
+        // -------------------------------------------------
+        // Check authentication
+        // -------------------------------------------------
 
-        Long userId =
-                (Long) session.getAttribute(
-                        "userId"
-                );
+        if (authentication == null ||
+                !authentication.isAuthenticated()) {
 
-
-        if (userId == null) {
-
-            return "redirect:/auth/login";
+            return "redirect:/login";
         }
 
+        // -------------------------------------------------
+        // Get role from JWT authentication
+        // -------------------------------------------------
 
-        String role =
-                (String) session.getAttribute(
-                        "userRole"
-                );
+        String role = authentication
+                .getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst()
+                .orElse("");
 
+        // -------------------------------------------------
+        // Check ADMIN role
+        // -------------------------------------------------
 
-        if (!"ADMIN".equalsIgnoreCase(role)) {
+        if (!"ROLE_ADMIN".equalsIgnoreCase(role)
+                && !"ADMIN".equalsIgnoreCase(role)) {
 
-            return "redirect:/auth/login";
+            return "redirect:/login";
         }
 
+        // -------------------------------------------------
+        // Send user data to Thymeleaf
+        // -------------------------------------------------
 
         model.addAttribute(
                 "userName",
-                session.getAttribute("userName")
+                authentication.getName()
         );
-
 
         model.addAttribute(
                 "userRole",
-                role
+                "ADMIN"
         );
-
 
         return "admin/dashboard";
     }
@@ -79,145 +87,133 @@ public class AdminController {
 
     @GetMapping("/quotations")
     public String quotationList(
-
-            HttpSession session,
-
+            Authentication authentication,
             Model model,
-
             @RequestParam(
                     value = "approved",
                     required = false
             )
-            Boolean approved) {
+            Boolean approved
+    ) {
 
+        // -------------------------------------------------
+        // Check login + admin
+        // -------------------------------------------------
 
-        Long adminId =
-                (Long) session.getAttribute(
-                        "userId"
-                );
-
-
-        if (adminId == null) {
-
-            return "redirect:/auth/login";
+        if (!isAdmin(authentication)) {
+            return "redirect:/login";
         }
 
-
-        String role =
-                (String) session.getAttribute(
-                        "userRole"
-                );
-
-
-        if (!"ADMIN".equalsIgnoreCase(role)) {
-
-            return "redirect:/auth/login";
-        }
-
+        // -------------------------------------------------
+        // Get quotations
+        // -------------------------------------------------
 
         List<QuotationResponseDTO> quotations =
-                quotationService
-                        .getAllQuotations();
-
+                quotationService.getAllQuotations();
 
         model.addAttribute(
                 "quotations",
                 quotations
         );
 
-
         model.addAttribute(
                 "approved",
                 approved
         );
 
+        model.addAttribute(
+                "userName",
+                authentication.getName()
+        );
+
+        model.addAttribute(
+                "userRole",
+                "ADMIN"
+        );
 
         return "admin/quotation-list";
     }
 
 
     // =====================================================
-    // APPROVE
+    // APPROVE QUOTATION
     // =====================================================
 
     @PostMapping("/quotations/{id}/approve")
     public String approveQuotation(
-
             @PathVariable Long id,
+            Authentication authentication
+    ) {
 
-            HttpSession session) {
+        // -------------------------------------------------
+        // Check login + admin
+        // -------------------------------------------------
 
-
-        Long adminId =
-                (Long) session.getAttribute(
-                        "userId"
-                );
-
-
-        if (adminId == null) {
-
-            return "redirect:/auth/login";
+        if (!isAdmin(authentication)) {
+            return "redirect:/login";
         }
 
-
-        String role =
-                (String) session.getAttribute(
-                        "userRole"
-                );
-
-
-        if (!"ADMIN".equalsIgnoreCase(role)) {
-
-            return "redirect:/auth/login";
-        }
-
+        // -------------------------------------------------
+        // Approve quotation
+        // -------------------------------------------------
 
         quotationService.approveQuotation(id);
-
 
         return "redirect:/admin/quotations?approved=true";
     }
 
 
     // =====================================================
-    // REJECT
+    // REJECT QUOTATION
     // =====================================================
 
     @PostMapping("/quotations/{id}/reject")
     public String rejectQuotation(
-
             @PathVariable Long id,
+            Authentication authentication
+    ) {
 
-            HttpSession session) {
+        // -------------------------------------------------
+        // Check login + admin
+        // -------------------------------------------------
 
-
-        Long adminId =
-                (Long) session.getAttribute(
-                        "userId"
-                );
-
-
-        if (adminId == null) {
-
-            return "redirect:/auth/login";
+        if (!isAdmin(authentication)) {
+            return "redirect:/login";
         }
 
-
-        String role =
-                (String) session.getAttribute(
-                        "userRole"
-                );
-
-
-        if (!"ADMIN".equalsIgnoreCase(role)) {
-
-            return "redirect:/auth/login";
-        }
-
+        // -------------------------------------------------
+        // Reject quotation
+        // -------------------------------------------------
 
         quotationService.rejectQuotation(id);
 
-
         return "redirect:/admin/quotations?rejected=true";
+    }
+
+
+    // =====================================================
+    // COMMON ADMIN CHECK
+    // =====================================================
+
+    private boolean isAdmin(Authentication authentication) {
+
+        if (authentication == null ||
+                !authentication.isAuthenticated()) {
+
+            return false;
+        }
+
+        return authentication
+                .getAuthorities()
+                .stream()
+                .anyMatch(authority ->
+                        "ROLE_ADMIN".equalsIgnoreCase(
+                                authority.getAuthority()
+                        )
+                                ||
+                                "ADMIN".equalsIgnoreCase(
+                                        authority.getAuthority()
+                                )
+                );
     }
 }

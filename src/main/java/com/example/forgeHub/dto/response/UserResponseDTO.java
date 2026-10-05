@@ -13,7 +13,7 @@ public class UserResponseDTO {
 
     private String email;
 
-    private int isFirstTimeLogin;
+    private Boolean isFirstTimeLogin;
 
     private String role;
 

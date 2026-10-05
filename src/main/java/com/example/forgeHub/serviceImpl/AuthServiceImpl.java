@@ -163,7 +163,7 @@ public class AuthServiceImpl implements AuthService {
 
 
             // -------------------------------------------------
-            // STEP 6: Store setup token in cookie
+            // STEP 6: Store setup token in HttpOnly cookie
             // -------------------------------------------------
 
             addTwoFactorSetupCookie(
@@ -178,12 +178,9 @@ public class AuthServiceImpl implements AuthService {
             );
 
 
-            // -------------------------------------------------
             // No access token
             // No refresh token
-            //
             // OTP verification ke baad hi token milega.
-            // -------------------------------------------------
 
             return new LoginResponse(
                     true,
@@ -247,10 +244,8 @@ public class AuthServiceImpl implements AuthService {
         );
 
 
-        // -----------------------------------------------------
         // No access token yet
         // User must verify Google Authenticator OTP
-        // -----------------------------------------------------
 
         return new LoginResponse(
                 false,
@@ -595,7 +590,17 @@ public class AuthServiceImpl implements AuthService {
 
 
             // -------------------------------------------------
-            // STEP 15: Refresh token cookie
+            // STEP 15: Store access token in HttpOnly cookie
+            // -------------------------------------------------
+
+            addAccessTokenCookie(
+                    response,
+                    accessToken
+            );
+
+
+            // -------------------------------------------------
+            // STEP 16: Store refresh token in HttpOnly cookie
             // -------------------------------------------------
 
             addRefreshCookie(
@@ -611,7 +616,7 @@ public class AuthServiceImpl implements AuthService {
 
 
             // -------------------------------------------------
-            // STEP 16: Return access token
+            // STEP 17: Return access token
             // -------------------------------------------------
 
             return new TokenResponse(
@@ -795,7 +800,7 @@ public class AuthServiceImpl implements AuthService {
 
 
             // -------------------------------------------------
-            // STEP 9: New access token
+            // STEP 9: Generate new access token
             // -------------------------------------------------
 
             String newAccessToken =
@@ -805,7 +810,7 @@ public class AuthServiceImpl implements AuthService {
 
 
             // -------------------------------------------------
-            // STEP 10: New JTI
+            // STEP 10: Generate new JTI
             // -------------------------------------------------
 
             String newJti =
@@ -813,7 +818,7 @@ public class AuthServiceImpl implements AuthService {
 
 
             // -------------------------------------------------
-            // STEP 11: New refresh token
+            // STEP 11: Generate new refresh token
             // -------------------------------------------------
 
             String newRefreshToken =
@@ -851,7 +856,17 @@ public class AuthServiceImpl implements AuthService {
 
 
             // -------------------------------------------------
-            // STEP 14: Replace refresh cookie
+            // STEP 14: Replace ACCESS token cookie
+            // -------------------------------------------------
+
+            addAccessTokenCookie(
+                    response,
+                    newAccessToken
+            );
+
+
+            // -------------------------------------------------
+            // STEP 15: Replace REFRESH token cookie
             // -------------------------------------------------
 
             addRefreshCookie(
@@ -905,24 +920,20 @@ public class AuthServiceImpl implements AuthService {
         );
 
 
+        // -----------------------------------------------------
+        // STEP 1: Revoke refresh token
+        // -----------------------------------------------------
+
         if (refreshToken != null &&
                 !refreshToken.isBlank()) {
 
             try {
-
-                // -------------------------------------------------
-                // STEP 1: Extract JTI
-                // -------------------------------------------------
 
                 String jti =
                         jwtService.extractJti(
                                 refreshToken
                         );
 
-
-                // -------------------------------------------------
-                // STEP 2: Find user and revoke token
-                // -------------------------------------------------
 
                 userRepository
                         .findByRefreshJti(jti)
@@ -940,6 +951,10 @@ public class AuthServiceImpl implements AuthService {
 
             } catch (Exception e) {
 
+                /*
+                 * Logout should still complete even when
+                 * refresh token is expired or invalid.
+                 */
                 log.warn(
                         "Invalid or expired refresh token during logout"
                 );
@@ -948,7 +963,16 @@ public class AuthServiceImpl implements AuthService {
 
 
         // -----------------------------------------------------
-        // STEP 3: Clear refresh cookie
+        // STEP 2: Clear access token cookie
+        // -----------------------------------------------------
+
+        clearAccessTokenCookie(
+                response
+        );
+
+
+        // -----------------------------------------------------
+        // STEP 3: Clear refresh token cookie
         // -----------------------------------------------------
 
         clearRefreshCookie(
@@ -957,7 +981,7 @@ public class AuthServiceImpl implements AuthService {
 
 
         log.info(
-                "Logout completed"
+                "Logout completed successfully"
         );
     }
 
@@ -1498,6 +1522,44 @@ public class AuthServiceImpl implements AuthService {
 
 
     // =========================================================
+    // ACCESS TOKEN COOKIE
+    // =========================================================
+
+    private void addAccessTokenCookie(
+            HttpServletResponse response,
+            String accessToken
+    ) {
+
+        Cookie cookie =
+                new Cookie(
+                        "accessToken",
+                        accessToken
+                );
+
+        cookie.setHttpOnly(true);
+
+        // Local HTTP testing
+        cookie.setSecure(false);
+
+        // Dashboard aur baaki protected URLs ke liye
+        cookie.setPath("/");
+
+        // 15 minutes
+        cookie.setMaxAge(
+                15 * 60
+        );
+
+        response.addCookie(
+                cookie
+        );
+
+        log.debug(
+                "Access token HttpOnly cookie created"
+        );
+    }
+
+
+    // =========================================================
     // REFRESH COOKIE
     // =========================================================
 
@@ -1567,6 +1629,39 @@ public class AuthServiceImpl implements AuthService {
 
         log.debug(
                 "Refresh token cookie cleared"
+        );
+    }
+
+
+    // =========================================================
+    // CLEAR ACCESS TOKEN COOKIE
+    // =========================================================
+
+    private void clearAccessTokenCookie(
+            HttpServletResponse response
+    ) {
+
+        Cookie cookie =
+                new Cookie(
+                        "accessToken",
+                        ""
+                );
+
+        cookie.setHttpOnly(true);
+
+        // Local HTTP testing
+        cookie.setSecure(false);
+
+        cookie.setPath("/");
+
+        cookie.setMaxAge(0);
+
+        response.addCookie(
+                cookie
+        );
+
+        log.debug(
+                "Access token cookie cleared"
         );
     }
 }

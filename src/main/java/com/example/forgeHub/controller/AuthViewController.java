@@ -37,13 +37,13 @@ public class AuthViewController {
     }
 
 
-    @GetMapping("/admin/dashboard")
-    public String adminDashboardPage() {
-        return "admin/dashboard";
-    }
-
-    @GetMapping("/vendor/dashboard")
-    public String vendorDashboardPage() {
-        return "vendor/dashboard";
-    }
+//    @GetMapping("/admin/dashboard")
+//    public String adminDashboardPage() {
+//        return "admin/dashboard";
+//    }
+//
+//    @GetMapping("/vendor/dashboard")
+//    public String vendorDashboardPage() {
+//        return "vendor/dashboard";
+//    }
 }

@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
                 .email(userRequestDTO.getEmail())
                 .role(userRequestDTO.getRole())
                 .address(userRequestDTO.getAddress())
-                .password(userRequestDTO.getPassword())
+                .passwordHash(userRequestDTO.getPassword())
                 .companyName(userRequestDTO.getCompanyName())
                 .gstNo(userRequestDTO.getGstNo())
                 .mobileNo(userRequestDTO.getMobileNo())

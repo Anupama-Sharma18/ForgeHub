@@ -6,6 +6,7 @@ import io.jsonwebtoken.JwtException;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -23,13 +24,17 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter
+        extends OncePerRequestFilter {
 
     private final JwtService jwtService;
 
-    public JwtAuthenticationFilter(JwtService jwtService) {
+    public JwtAuthenticationFilter(
+            JwtService jwtService
+    ) {
         this.jwtService = jwtService;
     }
+
 
     @Override
     protected void doFilterInternal(
@@ -38,8 +43,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        String requestUri = request.getRequestURI();
-        String method = request.getMethod();
+        String requestUri =
+                request.getRequestURI();
+
+        String method =
+                request.getMethod();
+
 
         log.debug(
                 "JWT authentication filter started. method={}, uri={}",
@@ -47,116 +56,168 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 requestUri
         );
 
-        // ==========================================
-        // 1. Read Authorization header
-        // ==========================================
 
-        String authHeader =
-                request.getHeader("Authorization");
+        // =====================================================
+        // 1. FIRST TRY TO GET ACCESS TOKEN FROM COOKIE
+        // =====================================================
 
-        // ==========================================
-        // 2. Token nahi hai
-        // ==========================================
+        String accessToken =
+                getAccessTokenFromCookie(request);
 
-        if (authHeader == null ||
-                !authHeader.startsWith("Bearer ")) {
+
+        // =====================================================
+        // 2. OPTIONAL FALLBACK - AUTHORIZATION HEADER
+        // =====================================================
+        //
+        // Existing API testing / Postman ke liye useful hai.
+        // Browser flow mein HttpOnly cookie use hogi.
+        // =====================================================
+
+        if (accessToken == null || accessToken.isBlank()) {
+
+            String authHeader =
+                    request.getHeader("Authorization");
+
+            if (authHeader != null &&
+                    authHeader.startsWith("Bearer ")) {
+
+                accessToken =
+                        authHeader.substring(7);
+            }
+        }
+
+
+        // =====================================================
+        // 3. NO ACCESS TOKEN
+        // =====================================================
+
+        if (accessToken == null ||
+                accessToken.isBlank()) {
 
             log.debug(
-                    "No Bearer access token found. Continuing request. uri={}",
+                    "No access token found. Continuing request. uri={}",
                     requestUri
             );
 
-            filterChain.doFilter(request, response);
+            filterChain.doFilter(
+                    request,
+                    response
+            );
+
             return;
         }
 
-        // ==========================================
-        // 3. Extract Access Token
-        // ==========================================
 
-        String accessToken =
-                authHeader.substring(7);
-
-        // IMPORTANT:
-        // Access token ko kabhi log nahi karna.
+        // =====================================================
+        // 4. VERIFY JWT
+        // =====================================================
 
         try {
 
-            // ==========================================
-            // 4. Verify JWT
-            // ==========================================
-
             Claims claims =
-                    jwtService.extractClaims(accessToken);
+                    jwtService.extractClaims(
+                            accessToken
+                    );
+
 
             log.debug(
                     "JWT signature and claims validated successfully. uri={}",
                     requestUri
             );
 
-            // ==========================================
-            // 5. Check token type
-            // ==========================================
+
+            // =================================================
+            // 5. CHECK TOKEN TYPE
+            // =================================================
 
             String tokenType =
-                    claims.get("type", String.class);
+                    claims.get(
+                            "type",
+                            String.class
+                    );
+
 
             if (!"ACCESS".equals(tokenType)) {
 
                 log.warn(
-                        "Invalid JWT token type received. expected=ACCESS, actual={}, uri={}",
+                        "Invalid JWT token type. expected=ACCESS, actual={}, uri={}",
                         tokenType,
                         requestUri
                 );
 
-                filterChain.doFilter(request, response);
+                filterChain.doFilter(
+                        request,
+                        response
+                );
+
                 return;
             }
 
-            // ==========================================
-            // 6. Get username/email
-            // ==========================================
+
+            // =================================================
+            // 6. GET EMAIL
+            // =================================================
 
             String email =
                     claims.getSubject();
 
-            if (email == null || email.isBlank()) {
+
+            if (email == null ||
+                    email.isBlank()) {
 
                 log.warn(
                         "JWT subject/email is missing. uri={}",
                         requestUri
                 );
 
-                filterChain.doFilter(request, response);
+                filterChain.doFilter(
+                        request,
+                        response
+                );
+
                 return;
             }
 
-            // ==========================================
-            // 7. Get role
-            // ==========================================
+
+            // =================================================
+            // 7. GET ROLE
+            // =================================================
 
             String role =
-                    claims.get("role", String.class);
+                    claims.get(
+                            "role",
+                            String.class
+                    );
 
-            if (role == null || role.isBlank()) {
+
+            if (role == null ||
+                    role.isBlank()) {
 
                 log.warn(
                         "JWT role is missing for user: {}",
                         email
                 );
 
-                filterChain.doFilter(request, response);
+                filterChain.doFilter(
+                        request,
+                        response
+                );
+
                 return;
             }
 
-            // ==========================================
-            // 8. Create Authentication object
-            // ==========================================
+
+            // =================================================
+            // 8. CREATE AUTHENTICATION
+            // =================================================
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
+
                             email,
+
                             null,
+
                             List.of(
                                     new SimpleGrantedAuthority(
                                             "ROLE_" + role
@@ -164,13 +225,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             )
                     );
 
-            // ==========================================
-            // 9. Put authentication into SecurityContext
-            // ==========================================
+
+            // =================================================
+            // 9. SET SECURITY CONTEXT
+            // =================================================
 
             SecurityContextHolder
                     .getContext()
-                    .setAuthentication(authentication);
+                    .setAuthentication(
+                            authentication
+                    );
+
 
             log.debug(
                     "JWT authentication successful. user={}, role={}, uri={}",
@@ -179,17 +244,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     requestUri
             );
 
-        } catch (JwtException e) {
 
-            // ==========================================
-            // Invalid / expired JWT
-            // ==========================================
+        } catch (JwtException e) {
 
             log.warn(
                     "JWT validation failed. uri={}, reason={}",
                     requestUri,
                     e.getMessage()
             );
+
 
         } catch (IllegalArgumentException e) {
 
@@ -200,11 +263,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             );
         }
 
-        // ==========================================
-        // 10. Continue filter chain
-        // ==========================================
 
-        filterChain.doFilter(request, response);
+        // =====================================================
+        // 10. CONTINUE FILTER CHAIN
+        // =====================================================
+
+        filterChain.doFilter(
+                request,
+                response
+        );
+
 
         log.debug(
                 "JWT authentication filter completed. method={}, uri={}, status={}",
@@ -212,5 +280,37 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 requestUri,
                 response.getStatus()
         );
+    }
+
+
+    // =========================================================
+    // GET ACCESS TOKEN FROM HTTPONLY COOKIE
+    // =========================================================
+
+    private String getAccessTokenFromCookie(
+            HttpServletRequest request
+    ) {
+
+        Cookie[] cookies =
+                request.getCookies();
+
+
+        if (cookies == null) {
+            return null;
+        }
+
+
+        for (Cookie cookie : cookies) {
+
+            if ("accessToken".equals(
+                    cookie.getName()
+            )) {
+
+                return cookie.getValue();
+            }
+        }
+
+
+        return null;
     }
 }

@@ -69,13 +69,13 @@ public class JwtServiceImpl implements JwtService {
 
         log.debug(
                 "Generating ACCESS token for userId={}",
-                user.getUserId()
+                user.getId()
         );
 
         String token =
                 Jwts.builder()
                         .subject(user.getEmail())
-                        .claim("userId", user.getUserId())
+                        .claim("userId", user.getId())
                         .claim("role", user.getRole())
                         .claim("type", "ACCESS")
                         .issuedAt(new Date())
@@ -90,7 +90,7 @@ public class JwtServiceImpl implements JwtService {
 
         log.debug(
                 "ACCESS token generated successfully for userId={}",
-                user.getUserId()
+                user.getId()
         );
 
         // NEVER log the actual token
@@ -107,13 +107,13 @@ public class JwtServiceImpl implements JwtService {
 
         log.info(
                 "Generating temporary 2FA_LOGIN token for userId={}",
-                user.getUserId()
+                user.getId()
         );
 
         String token =
                 Jwts.builder()
                         .subject(user.getEmail())
-                        .claim("userId", user.getUserId())
+                        .claim("userId", user.getId())
                         .claim("type", "2FA_LOGIN")
                         .issuedAt(new Date())
                         .expiration(
@@ -127,7 +127,7 @@ public class JwtServiceImpl implements JwtService {
 
         log.debug(
                 "2FA_LOGIN token generated successfully for userId={} with expiration={} ms",
-                user.getUserId(),
+                user.getId(),
                 twoFactorLoginExpiration
         );
 
@@ -144,13 +144,13 @@ public class JwtServiceImpl implements JwtService {
 
         log.info(
                 "Generating temporary 2FA_RECOVERY token for userId={}",
-                user.getUserId()
+                user.getId()
         );
 
         String token =
                 Jwts.builder()
                         .subject(user.getEmail())
-                        .claim("userId", user.getUserId())
+                        .claim("userId", user.getId())
                         .claim("type", "2FA_RECOVERY")
                         .issuedAt(new Date())
                         .expiration(
@@ -164,7 +164,7 @@ public class JwtServiceImpl implements JwtService {
 
         log.debug(
                 "2FA_RECOVERY token generated successfully for userId={}",
-                user.getUserId()
+                user.getId()
         );
 
         return token;
@@ -183,13 +183,13 @@ public class JwtServiceImpl implements JwtService {
 
         log.info(
                 "Generating REFRESH token for userId={} with new JTI",
-                user.getUserId()
+                user.getId()
         );
 
         String token =
                 Jwts.builder()
                         .subject(user.getEmail())
-                        .claim("userId", user.getUserId())
+                        .claim("userId", user.getId())
                         .claim("type", "REFRESH")
                         .id(jti)
                         .issuedAt(new Date())
@@ -204,7 +204,7 @@ public class JwtServiceImpl implements JwtService {
 
         log.debug(
                 "REFRESH token generated successfully for userId={}",
-                user.getUserId()
+                user.getId()
         );
 
         // NEVER log token or JTI
@@ -221,13 +221,13 @@ public class JwtServiceImpl implements JwtService {
 
         log.info(
                 "Generating temporary 2FA_SETUP token for userId={}",
-                user.getUserId()
+                user.getId()
         );
 
         String token =
                 Jwts.builder()
                         .subject(user.getEmail())
-                        .claim("userId", user.getUserId())
+                        .claim("userId", user.getId())
                         .claim("type", "2FA_SETUP")
                         .issuedAt(new Date())
                         .expiration(
@@ -241,7 +241,7 @@ public class JwtServiceImpl implements JwtService {
 
         log.debug(
                 "2FA_SETUP token generated successfully for userId={} with expiration={} ms",
-                user.getUserId(),
+                user.getId(),
                 twoFactorSetupExpiration
         );
 

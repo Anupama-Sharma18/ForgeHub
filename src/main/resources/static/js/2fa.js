@@ -23,6 +23,15 @@ document.addEventListener("DOMContentLoaded", function () {
     // =========================================================
     // DISPLAY LOGIN EMAIL
     // =========================================================
+    //
+    // loginEmail sirf UI ke liye hai.
+    // Authentication ke liye iska use nahi karna hai.
+    //
+    // Actual authentication:
+    // 2FA token     -> HttpOnly cookie
+    // access token  -> HttpOnly cookie
+    // refresh token -> HttpOnly cookie
+    // =========================================================
 
     const loginEmail =
         sessionStorage.getItem("loginEmail");
@@ -35,230 +44,238 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // =========================================================
-    // CHECK LOGIN SESSION
-    // =========================================================
-
-    if (!loginEmail) {
-
-        showError(
-            "Login session not found. Please login again."
-        );
-
-        setTimeout(function () {
-
-            window.location.href =
-                "/login";
-
-        }, 1500);
-
-        return;
-    }
-
-
-    // =========================================================
     // OTP INPUT - ONLY 6 DIGITS
     // =========================================================
 
-    codeInput.addEventListener(
-        "input",
-        function () {
+    if (codeInput) {
 
-            // Remove non-numeric characters
-            this.value =
-                this.value.replace(/\D/g, "");
+        codeInput.addEventListener(
+            "input",
+            function () {
 
-            // Maximum 6 digits
-            if (this.value.length > 6) {
-
+                // Remove non-numeric characters
                 this.value =
-                    this.value.substring(0, 6);
+                    this.value.replace(/\D/g, "");
+
+                // Maximum 6 digits
+                if (this.value.length > 6) {
+
+                    this.value =
+                        this.value.substring(0, 6);
+                }
             }
-        }
-    );
+        );
+    }
 
 
     // =========================================================
     // FORM SUBMIT
     // =========================================================
 
-    twoFactorForm.addEventListener(
-        "submit",
-        async function (event) {
+    if (twoFactorForm) {
 
-            event.preventDefault();
+        twoFactorForm.addEventListener(
+            "submit",
+            async function (event) {
 
-
-            // -------------------------------------------------
-            // CLEAR OLD MESSAGES
-            // -------------------------------------------------
-
-            hideMessage(errorMessage);
-
-            // GET OTP
-
-            const code =
-                codeInput.value.trim();
+                event.preventDefault();
 
 
-            // -------------------------------------------------
-            // CLIENT SIDE VALIDATION
-            // -------------------------------------------------
+                // -------------------------------------------------
+                // CLEAR OLD MESSAGE
+                // -------------------------------------------------
 
-            if (!/^\d{6}$/.test(code)) {
-
-                showError(
-                    "Please enter a valid 6-digit Google Authenticator code."
-                );
-
-                codeInput.focus();
-
-                return;
-            }
+                hideMessage(errorMessage);
 
 
-            // -------------------------------------------------
-            // BUTTON LOADING
-            // -------------------------------------------------
+                // -------------------------------------------------
+                // GET OTP
+                // -------------------------------------------------
 
-            setLoading(true);
+                const code =
+                    codeInput
+                        ? codeInput.value.trim()
+                        : "";
 
 
-            try {
+                // -------------------------------------------------
+                // CLIENT SIDE VALIDATION
+                // -------------------------------------------------
 
-                // =============================================
-                // CALL BACKEND
-                // =============================================
+                if (!/^\d{6}$/.test(code)) {
 
-                const response =
-                    await fetch(
-                        "/auth/2fa/verify",
-                        {
-                            method: "POST",
-
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            },
-
-                            credentials:
-                                "same-origin",
-
-                            body: JSON.stringify({
-                                code: code
-                            })
-                        }
+                    showError(
+                        "Please enter a valid 6-digit Google Authenticator code."
                     );
 
+                    if (codeInput) {
+                        codeInput.focus();
+                    }
 
-                // =============================================
-                // READ RESPONSE
-                // =============================================
+                    return;
+                }
 
-                let data = {};
+
+                // -------------------------------------------------
+                // BUTTON LOADING
+                // -------------------------------------------------
+
+                setLoading(true);
+
 
                 try {
 
-                    data =
-                        await response.json();
+                    // =============================================
+                    // CALL BACKEND
+                    // =============================================
+                    //
+                    // Browser automatically sends:
+                    //
+                    // twoFactorSetupToken
+                    // OR
+                    // twoFactorLoginToken
+                    // OR
+                    // twoFactorRecoveryToken
+                    //
+                    // because these are HttpOnly cookies.
+                    //
+                    // Backend verification ke baad:
+                    //
+                    // accessToken  -> HttpOnly cookie
+                    // refreshToken -> HttpOnly cookie
+                    //
+                    // =============================================
+
+                    const response =
+                        await fetch(
+                            "/auth/2fa/verify",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json",
+
+                                    "Accept":
+                                        "application/json"
+                                },
+
+                                credentials:
+                                    "same-origin",
+
+                                body: JSON.stringify({
+                                    code: code
+                                })
+                            }
+                        );
+
+
+                    // =============================================
+                    // READ RESPONSE
+                    // =============================================
+
+                    let data = {};
+
+                    try {
+
+                        data =
+                            await response.json();
+
+                    } catch (error) {
+
+                        console.error(
+                            "Unable to parse 2FA response:",
+                            error
+                        );
+                    }
+
+
+                    // =============================================
+                    // VERIFICATION FAILED
+                    // =============================================
+
+                    if (!response.ok) {
+
+                        showError(
+                            data.message ||
+                            "Invalid or expired OTP."
+                        );
+
+                        if (codeInput) {
+
+                            codeInput.value = "";
+
+                            codeInput.focus();
+                        }
+
+                        return;
+                    }
+
+
+                    // =============================================
+                    // OTP VERIFICATION SUCCESSFUL
+                    // =============================================
+                    //
+                    // IMPORTANT:
+                    //
+                    // data.accessToken ko sessionStorage mein
+                    // store nahi karna hai.
+                    //
+                    // Backend already accessToken ko
+                    // HttpOnly cookie mein set karta hai.
+                    //
+                    // JavaScript HttpOnly cookie ko read nahi kar
+                    // sakta, aur read karna bhi nahi chahiye.
+                    //
+                    // =============================================
+
+
+                    // =============================================
+                    // CLEAN TEMPORARY UI DATA
+                    // =============================================
+
+                    sessionStorage.removeItem(
+                        "qrCodeUrl"
+                    );
+
+
+                    // loginEmail bhi sirf temporary UI data hai
+                    sessionStorage.removeItem(
+                        "loginEmail"
+                    );
+
+
+                    // =============================================
+                    // GO TO ADMIN DASHBOARD
+                    // =============================================
+
+                    window.location.href =
+                        "/admin/dashboard";
+
 
                 } catch (error) {
 
                     console.error(
-                        "Unable to parse 2FA response:",
+                        "2FA verification request failed:",
                         error
                     );
-                }
-
-
-                // =============================================
-                // VERIFICATION FAILED
-                // =============================================
-
-                if (!response.ok) {
 
                     showError(
-                        data.message ||
-                        "Invalid or expired OTP."
+                        "Unable to connect to the server. Please try again."
                     );
 
-                    codeInput.value = "";
+                } finally {
 
-                    codeInput.focus();
-
-                    return;
+                    setLoading(false);
                 }
 
-
-                // =============================================
-                // GET ACCESS TOKEN
-                // =============================================
-
-                if (!data.accessToken) {
-
-                    showError(
-                        "Access token was not received from server."
-                    );
-
-                    return;
-                }
-
-
-                // =============================================
-                // STORE ACCESS TOKEN
-                // =============================================
-                //
-                // JWT access token browser side use hoga
-                // protected API requests ke Authorization
-                // header ke liye.
-                //
-                // Refresh token JS ko nahi milega because
-                // it is stored in HttpOnly cookie.
-                // =============================================
-
-                sessionStorage.setItem(
-                    "accessToken",
-                    data.accessToken
-                );
-
-
-                // =============================================
-                // CLEAN TEMPORARY DATA
-
-                sessionStorage.removeItem(
-                    "qrCodeUrl"
-                );
-
-                window.location.href = "/admin/dashboard";
-
-
-            } catch (error) {
-
-                console.error(
-                    "2FA verification request failed:",
-                    error
-                );
-
-                showError(
-                    "Unable to connect to the server. Please try again."
-                );
-
-            } finally {
-
-                setLoading(false);
             }
-
-        }
-    );
+        );
+    }
 
 
     // =========================================================
     // LOST YOUR OTP
-    // =========================================================
-    //
-    // Normal login flow me user Google Authenticator OTP
-    // nahi de pa raha hai.
-    //
-    // Recovery page par jayega.
     // =========================================================
 
     const lostOtpLink =
@@ -297,6 +314,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "d-none"
         );
     }
+
 
     // =========================================================
     // HIDE MESSAGE

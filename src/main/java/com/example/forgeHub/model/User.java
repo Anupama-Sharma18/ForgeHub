@@ -27,9 +27,9 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "UserId")
+    @Column(name = "User_id")
     @EqualsAndHashCode.Include
-    private Integer userId;
+    private Long id;
 
 
     // =========================================================
